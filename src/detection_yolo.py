@@ -3,17 +3,13 @@ from torchvision import models, transforms
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 
-# Load the pre-trained SSD model
-model = models.detection.ssd300(pretrained=True)
+# Load YOLOv3 model from torchvision
+model = models.detection.yolo_v3(pretrained=True)
 model.eval()
 
 # Load and preprocess an image
-image_path = "AreYouABot\\3546.png"
+image_path = "screenshoots\\screenshot1.png"
 image = Image.open(image_path)
-
-# Ensure the image has 3 channels (RGB)
-if image.mode != 'RGB':
-    image = image.convert('RGB')
 
 # Apply torchvision transforms
 preprocess = transforms.Compose([
