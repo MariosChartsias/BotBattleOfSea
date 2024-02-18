@@ -3,6 +3,8 @@ import numpy as np
 import pyautogui  # Import pyautogui for screen capture
 from ultralytics import YOLO
 from ultralytics.utils.plotting import colors, Annotator
+from PIL import ImageGrab
+from win32api import GetSystemMetrics
 import Tools as tl
 import keyboard #pip install keyboard
 import time
@@ -19,7 +21,7 @@ confirm=False
 enable_to_click_glitter=True
 click_next_glitter=True
 navigation=False
-
+height, width = GetSystemMetrics(0), GetSystemMetrics(1)
 # Set the center point for the visioneye annotation
 center_point = (-10, pyautogui.size()[1])  # Use the screen height as the y-coordinate
 
@@ -27,16 +29,12 @@ run=True
 i=1
 while run:
 
-    
-
-    # Capture a screenshot of the screen
-    screen = np.array(pyautogui.screenshot())
-
-    # Convert the screenshot to BGR format (OpenCV uses BGR by default)
-    screen_bgr = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
+    img = ImageGrab.grab(bbox=(0,0, width, height))
+    img_np = np.array(img)
+    screen_bgr = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
 
     # Predict objects in the screenshot using the YOLO model
-    results = model.predict(screen_bgr)
+    results = model.predict(screen_bgr, conf=0.2)
     boxes = results[0].boxes.xyxy.cpu()
     clss = results[0].boxes.cls.cpu().tolist()
     Dictionary = results[0].names
@@ -63,7 +61,8 @@ while run:
             Numbers=tl.screenshot_array(box[0],box[1],box[2],box[3],i)
             text=tl.getText(Numbers)
             i=i+1
-        print(f'text={text} and object={Dictionary[cls]}')
+            print(f'text={text} and object={Dictionary[cls]}')
+        ##################################################################        OCR CAPTURE CODE       ###########################################################################
         if(cls==5.0 and text!=''): #5.0: TextFieldToBotQuestion
             tl.click(box[0],box[2],box[1],box[3])   
             time.sleep(1) 
@@ -76,30 +75,19 @@ while run:
         if(cls==4.0 and confirm): #4.0: ConfirmToBotQuestion
             confirm=False
             tl.click(box[0],box[2],box[1],box[3])
-        if(cls==8.0): #8.0: glitter
+        #############################################################################################################################################################################
+        if(cls==9.0): #9.0: glitterClicked
+            tl.centerCamera()
+            time.sleep(2) 
+            break
+        elif(cls==8.0): #8.0: glitter
             tl.stableCam()
             tl.click(box[0],box[2],box[1],box[3])
-            time.sleep(9)
-            break
-        else:
-            if(cls==3.0): #3.0: CenterMyBoat
-                tl.click(box[0],box[2],box[1],box[3])
-            for boxNav, clsNav in zip(boxesNavigation, clssNavigation):
-                print(f"**************detection********************boxNav={boxNav[0]}, clsNav={clsNav}->{DictionaryNavigation[clsNav]}")   
-                if(clsNav==8.0):
-                    glitterNav=True
-                    break
-                else:
-                    glitterNav=False 
-                    if(clsNav==3.0): #3.0: CenterMyBoat
-                        tl.click(box[0],box[2],box[1],box[3])  
+            tl.mouse_in_safe_zone()
+            
 
-                if(clsNav==2.0 and not glitterNav): #2:0 BattleOfSeaWindow
-                    Width,Height = tl.getWidth_Height(boxNav[0],boxNav[2],boxNav[1],boxNav[3])
-                    x,y=tl.getMiddle_point(boxNav[0],boxNav[2],boxNav[1],boxNav[3])
-                    print(f'Width={Width} and Height={Height}')
-                    pyautogui.click(Width-x, Height-y)
-                    time.sleep(8)
+
+        
                 
             
 
