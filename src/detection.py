@@ -80,9 +80,21 @@ while run:
             tl.stableCam()
             tl.click(box[0],box[2],box[1],box[3])
             time.sleep(9)
+            break
         else:
+            if(cls==3.0): #3.0: CenterMyBoat
+                tl.click(box[0],box[2],box[1],box[3])
             for boxNav, clsNav in zip(boxesNavigation, clssNavigation):
-                if(clsNav==2.0 and not click_next_glitter): #2:0 BattleOfSeaWindow
+                print(f"**************detection********************boxNav={boxNav[0]}, clsNav={clsNav}->{DictionaryNavigation[clsNav]}")   
+                if(clsNav==8.0):
+                    glitterNav=True
+                    break
+                else:
+                    glitterNav=False 
+                    if(clsNav==3.0): #3.0: CenterMyBoat
+                        tl.click(box[0],box[2],box[1],box[3])  
+
+                if(clsNav==2.0 and not glitterNav): #2:0 BattleOfSeaWindow
                     Width,Height = tl.getWidth_Height(boxNav[0],boxNav[2],boxNav[1],boxNav[3])
                     x,y=tl.getMiddle_point(boxNav[0],boxNav[2],boxNav[1],boxNav[3])
                     print(f'Width={Width} and Height={Height}')
