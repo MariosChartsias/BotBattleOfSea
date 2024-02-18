@@ -1,143 +1,102 @@
-import torch
-from torchvision import models, transforms
-from PIL import Image, ImageDraw
-import matplotlib.pyplot as plt
-import pyautogui
+import cv2
 import numpy as np
-
-class ObjectDetectorFromString:
-    def __init__(self, frame_path):
-        self.frame = frame_path
-
-        # Load the pre-trained Faster R-CNN model
-        self.model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
-        self.model.eval()
-
-        # Load and preprocess an image
-        image = Image.open(self.frame)
-
-        # Ensure the image has 3 channels (RGB)
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-
-        # Apply torchvision transforms
-        preprocess = transforms.Compose([
-            transforms.ToTensor(),
-        ])
-
-        image_tensor = preprocess(image).unsqueeze(0)
-
-        # Make a prediction
-        with torch.no_grad():
-            prediction = self.model(image_tensor)
-
-        # Print the predicted bounding boxes and labels
-        # print(prediction)
-
-        # Visualize the image with bounding boxes and labels
-        image_with_boxes = image.copy()
-        draw = ImageDraw.Draw(image_with_boxes)
-
-        # Get the predicted boxes, labels, and scores
-        boxes = prediction[0]['boxes'].cpu().numpy()
-        labels = prediction[0]['labels'].cpu().numpy()
-        scores = prediction[0]['scores'].cpu().numpy()
-
-        # Draw bounding boxes and labels on the image
-        for box, label, score in zip(boxes, labels, scores):
-            draw.rectangle([(box[0], box[1]), (box[2], box[3])], outline="red", width=2)
-            draw.text((box[0], box[1]), f"{int(label)}: {score:.2f}", fill="red")
-
-        # Display the image with bounding boxes and labels
-        plt.imshow(image_with_boxes)
-        plt.axis('off')
-        plt.show()
-
-# Example usage:
-#detector = ObjectDetectorFromString("screenshots\\screenshot21.png")
+import pyautogui  # Import pyautogui for screen capture
+from ultralytics import YOLO
+from ultralytics.utils.plotting import colors, Annotator
+import Tools as tl
+import keyboard #pip install keyboard
+import time
 
 
-class ObjectDetector:
-    def __init__(self, frame):
-        # If the input is a PyAutoGUI screenshot, convert it to a NumPy array
-        if isinstance(frame, pyautogui.screenshot().__class__):
-            frame = np.array(frame)
-
-        self.frame = frame
-
-        # Load the pre-trained Faster R-CNN model
-        self.model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
-        self.model.eval()
-
-        # Convert the NumPy array to a PIL Image
-        image = Image.fromarray(self.frame)
-
-        # Ensure the image has 3 channels (RGB)
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-
-        # Apply torchvision transforms
-        preprocess = transforms.Compose([
-            transforms.ToTensor(),
-        ])
-
-        image_tensor = preprocess(image).unsqueeze(0)
-
-        # Make a prediction
-        with torch.no_grad():
-            prediction = self.model(image_tensor)
-
-        # Print the predicted bounding boxes and labels
-        # print(prediction)
-
-        # Visualize the image with bounding boxes and labels
-        self.image_with_boxes = image.copy()
-        self.draw = ImageDraw.Draw(self.image_with_boxes)
-
-        # Get the predicted boxes, labels, and scores
-        self.boxes = prediction[0]['boxes'].cpu().numpy()
-        self.labels = prediction[0]['labels'].cpu().numpy()
-        self.scores = prediction[0]['scores'].cpu().numpy()
-
-    def getPlot(self):
-        # Draw bounding boxes and labels on the image
-        for box, label, score in zip(self.boxes, self.labels, self.scores):
-            #self.draw.rectangle([(box[0], box[1]), (box[2], box[3])], outline="red", width=2)
-            self.draw.text((box[0], box[1]), f"{int(label)}: {score:.2f}", fill="red")
-
-        # Display the image with bounding boxes and labels
-        plt.imshow(self.image_with_boxes)
-        plt.axis('off')
-        plt.show()
 
 
-    def get_object_coordinates(self, target_label=8):
-        """
-        Get the coordinates (x, y) of the bounding box for the specified object label.
+model = YOLO("yolov8_1640.pt")
+modelOCR=YOLO("yolov8_ocr.pt")
+names = model.model.names
 
-        Parameters:
-        - target_label (int): The label of the object to find (default is 8).
+text=''
+confirm=False
+enable_to_click_glitter=True
+click_next_glitter=True
+navigation=False
 
-        Returns:
-        - tuple or None: Coordinates (x, y) if the object is found, None otherwise.
-        """
-        # Find the index of the target label in the labels array
-        target_index = np.where(self.labels == target_label)[0]
+# Set the center point for the visioneye annotation
+center_point = (-10, pyautogui.size()[1])  # Use the screen height as the y-coordinate
 
-        if len(target_index) > 0:
-            # Get the bounding box coordinates for the first instance of the target label
-            target_box = self.boxes[target_index[0]]
-            x, y = target_box[0], target_box[1]
-            return x, y
+run=True
+i=1
+while run:
+
+    
+
+    # Capture a screenshot of the screen
+    screen = np.array(pyautogui.screenshot())
+
+    # Convert the screenshot to BGR format (OpenCV uses BGR by default)
+    screen_bgr = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
+
+    # Predict objects in the screenshot using the YOLO model
+    results = model.predict(screen_bgr)
+    boxes = results[0].boxes.xyxy.cpu()
+    clss = results[0].boxes.cls.cpu().tolist()
+    Dictionary = results[0].names
+
+
+    #prediction for Navigation
+    resultsNavigation = model.predict(screen_bgr , imgsz=360, conf=0.2)
+    boxesNavigation = results[0].boxes.xyxy.cpu()
+    clssNavigation = results[0].boxes.cls.cpu().tolist()
+    DictionaryNavigation = results[0].names
+
+
+
+    #print(Dictionary.items())
+    # Annotate the screenshot with bounding boxes and class labels
+    annotator = Annotator(screen_bgr, line_width=2)
+    for box, cls in zip(boxes, clss):
+        #print(f"box={box}")
+        #print(f"cls={cls}->{Dictionary[cls]}")
+        print(f"**************detection********************box={box[0]}, cls={cls}->{Dictionary[cls]}")   
+
+        if(cls==12.0): #12: ocrText
+            #print(f'box[0]={box[0]},box[1]={box[1]},box[2]={box[2]},box[3]={box[3]}')
+            Numbers=tl.screenshot_array(box[0],box[1],box[2],box[3],i)
+            text=tl.getText(Numbers)
+            i=i+1
+        print(f'text={text} and object={Dictionary[cls]}')
+        if(cls==5.0 and text!=''): #5.0: TextFieldToBotQuestion
+            tl.click(box[0],box[2],box[1],box[3])   
+            time.sleep(1) 
+            pyautogui.typewrite(text)
+            time.sleep(1)
+            text=''
+            print(f'text={text}')
+            confirm=True
+            #run = False   
+        if(cls==4.0 and confirm): #4.0: ConfirmToBotQuestion
+            confirm=False
+            tl.click(box[0],box[2],box[1],box[3])
+        if(cls==8.0): #8.0: glitter
+            tl.stableCam()
+            tl.click(box[0],box[2],box[1],box[3])
+            time.sleep(9)
         else:
-            print(f"Object with label {target_label} not found.")
-            return None
+            for boxNav, clsNav in zip(boxesNavigation, clssNavigation):
+                if(clsNav==2.0 and not click_next_glitter): #2:0 BattleOfSeaWindow
+                    Width,Height = tl.getWidth_Height(boxNav[0],boxNav[2],boxNav[1],boxNav[3])
+                    x,y=tl.getMiddle_point(boxNav[0],boxNav[2],boxNav[1],boxNav[3])
+                    print(f'Width={Width} and Height={Height}')
+                    pyautogui.click(Width-x, Height-y)
+                    time.sleep(8)
+                
+            
 
+        annotator.box_label(box, label=names[int(cls)], color=colors(int(cls)))
+        annotator.visioneye(box, center_point)
 
+    if keyboard.is_pressed('esc'):
+            print("Stop Loop!")
+            run = False
 
-# Example usage:
-screenshot = pyautogui.screenshot()
-detector = ObjectDetector(screenshot)
-detector.getPlot()
-
-
+# Close all OpenCV windows
+cv2.destroyAllWindows()
