@@ -1,2 +1,5 @@
-ipynb_checkpoints
-vscode
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Visual Studio Code settings
+.vscode/
