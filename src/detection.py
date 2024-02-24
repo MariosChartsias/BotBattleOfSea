@@ -8,12 +8,13 @@ from win32api import GetSystemMetrics
 import Tools as tl
 import keyboard #pip install keyboard
 import time
+from Paths import *
 
 
 
 
-model = YOLO("yolov8_1640.pt")
-modelOCR=YOLO("yolov8_ocr.pt")
+model = YOLO(relative_path_object_model_1640px_windows)
+modelOCR=YOLO(relative_path_ocr_model_400px_windows)
 names = model.model.names
 
 text=''

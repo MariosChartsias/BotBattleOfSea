@@ -1,6 +1,7 @@
 import pyautogui
 import numpy as np
 from ultralytics import YOLO
+from Paths import *
 
 def click(x1, x2, y1, y2):
     middle_x = (x1 + x2) / 2
@@ -27,7 +28,7 @@ def screenshot_array(x1, y1, x2, y2,i):
 
     return (np.array(screenshot))
 
-def getText(screenshot_array_format,modelOCR=YOLO("yolov8_ocr.pt")):
+def getText(screenshot_array_format,modelOCR=YOLO(relative_path_ocr_model_400px_windows)):
     results = modelOCR.predict(screenshot_array_format,imgsz=300, conf=0.2)
     boxes = results[0].boxes.xyxy.cpu()
     clss = results[0].boxes.cls.cpu().tolist()
@@ -68,3 +69,6 @@ def getMiddle_point(x1, x2, y1, y2):
 
 def stableCam():
     pyautogui.typewrite('ws')
+
+def centerCamera():
+    pyautogui.typewrite('g')
