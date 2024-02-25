@@ -14,7 +14,7 @@ from Paths import *
 
 
 model = YOLO(relative_path_object_model_1640px_windows)
-modelOCR=YOLO(relative_path_ocr_model_400px_windows)
+modelOCR=YOLO(relative_path_ocr_model_640px_windows)
 names = model.model.names
 
 text=''

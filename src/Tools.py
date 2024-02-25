@@ -22,14 +22,16 @@ def screenshot_array(x1, y1, x2, y2,i):
     # Convert coordinates to integers
     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
+
+
     # Take a screenshot of the specified region
     screenshot = pyautogui.screenshot(region=(x1,y1,x2-x1,y2-y1))
     screenshot.save(f'OcrTexts\screenshot{i}.png')
 
     return (np.array(screenshot))
 
-def getText(screenshot_array_format,modelOCR=YOLO(relative_path_ocr_model_400px_windows)):
-    results = modelOCR.predict(screenshot_array_format,imgsz=300, conf=0.2)
+def getText(screenshot_array_format,modelOCR=YOLO(relative_path_ocr_model_640px_windows)):
+    results = modelOCR.predict(screenshot_array_format,imgsz=640, conf=0.2)
     boxes = results[0].boxes.xyxy.cpu()
     clss = results[0].boxes.cls.cpu().tolist()
     Dictionary = results[0].names
