@@ -58,7 +58,7 @@ while run:
         print(f"**************detection********************box={box[0]}, cls={cls}->{Dictionary[cls]}")   
 
         if(cls==12.0): #12: ocrText
-            #print(f'box[0]={box[0]},box[1]={box[1]},box[2]={box[2]},box[3]={box[3]}')
+            print(f'box[0]={box[0]},box[1]={box[1]},box[2]={box[2]},box[3]={box[3]}')
             Numbers=tl.screenshot_array(box[0],box[1],box[2],box[3],i)
             text=tl.getText(Numbers)
             i=i+1
