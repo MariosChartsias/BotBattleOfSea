@@ -3,3 +3,7 @@ ultralytics
 pywin32
 pillow
 PyAutoGUI
+torch 
+torchvision 
+torchaudio
+keyboard
