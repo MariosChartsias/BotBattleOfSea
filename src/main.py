@@ -1,47 +1,26 @@
-import sys
-
 import keyboard
-# sys.path.append('..\..\src') # this ensures that the src models are located to import them bellow
-#sys.path.append('C:\\Users\\Marios\\Desktop\\Μάριος\\BotBattleOfSea\\src') deprecated absolute path
 import cv2
 import numpy as np
-import pyautogui  # Import pyautogui for screen capture
-import ultralytics
+import pyautogui  
 from ultralytics import YOLO
-from ultralytics.utils.plotting import colors, Annotator
-from PIL import ImageGrab
 from win32api import GetSystemMetrics
-#import keyboard #pip install keyboard
 import time
 from Paths import *
-import math
 import os
 import shutil
 import random
 
 from utils.get_os_paths import *
 
+global screen_bgr 
+global last_execution_time
+
 time_of_pause=0
-
-def click(middle_x,middle_y):
-    pyautogui.click(middle_x, middle_y)
-    print("function: click") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
-
-
-def screenshot(x1, y1, x2, y2,i):
-    # Convert coordinates to integers
-    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-
-    # Take a screenshot of the specified region
-    screenshot = pyautogui.screenshot(region=(x1,y1,x2-x1,y2-y1))
-
-    # Save the screenshot
-    screenshot.save(get_app_path(f"OcrTexts/screenshot{i}.png"))
-    print("function: screenshot") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
+DEBUG = True
 
 def screenshot_array(x1, y1, x2, y2,i):
+    """ Convert screenshot picture of OCR to numpy array
+    """
     # Convert coordinates to integers
     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
     
@@ -62,6 +41,8 @@ def screenshot_array(x1, y1, x2, y2,i):
 
 #this absolute path works only for ipynb and not for the actual Tools.py file
 def getText(screenshot_array_format,modelOCR=YOLO(absolute_path_ocr_model_640px_windows)):
+    """ It receives screenshot numpy array and generates the coresponding CAPTCHA sollution
+    """
     results = modelOCR.predict(screenshot_array_format,imgsz=640, conf=0.2)
     boxes = results[0].boxes.xyxy.cpu()
     clss = results[0].boxes.cls.cpu().tolist()
@@ -76,83 +57,68 @@ def getText(screenshot_array_format,modelOCR=YOLO(absolute_path_ocr_model_640px_
     for value in sorted_dict.values():
         string=string+value
 
-    print("function: getText") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
+    if DEBUG:
+        print("function: getText")
+        time.sleep(time_of_pause) 
     return string
 
 def mouse_in_safe_zone():
+    """ Safe region is a spot where the mouse is resting to prevent overlapping with other elements
+    """
     pyautogui.FAILSAFE = False  # Disables the fail-safe feature
     pyautogui.moveTo(0, 0, duration=0)
-    print("function: mouse_in_safe_zone") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
 
-import random
-
-def getWidth_Height(x1, x2, y1, y2):
-    # Ensure x1 < x2 and y1 < y2
-    x_min, x_max = min(x1, x2), max(x1, x2)
-    y_min, y_max = min(y1, y2), max(y1, y2)
-    
-    Width=x_max-x_min
-    Height=y_max-y_min
-
-    print("function: getWidth_Height") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
-    return Width, Height
-
-def getMiddle_point(x1, x2, y1, y2):
-    middle_x = (x1 + x2) / 2
-    middle_y = (y1 + y2) / 2
-    
-    print("function: getMiddle_point") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
-    return(middle_x, middle_y)
+    if DEBUG:
+        print("function: mouse_in_safe_zone") # for debugging only
+        time.sleep(time_of_pause) # for debugging only
 
 def stableCam():
+    """ Clicks W and S button to stop the centering focus on ship
+        TODO: This should be configured from the user to any key
+    """
     pyautogui.typewrite('ws')
-    print("function: stableCam") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
+    if DEBUG:
+        print("function: stableCam") # for debugging only
+        time.sleep(time_of_pause) # for debugging only
 
-def centerCamera(): # g is default letter for centering the cammera 
+def centerCamera():
+    """ It focuses the camera to center of the game by pressign the G key
+        TODO: The control KEY should be configured by the user (or click on the center feature)
+    """
     pyautogui.typewrite('g')
-    print("function: centerCamera") # for debugging only
-    time.sleep(time_of_pause) # for debugging only
+    if DEBUG:
+        print("function: centerCamera")
+        time.sleep(time_of_pause) # for debugging only
 
-def cartesian_distance(x1, y1, x2, y2):
-    """
-    Calculate the Cartesian distance between two points (x1, y1) and (x2, y2).
-
-    Args:
-    - x1, y1 (float): Coordinates of the first point.
-    - x2, y2 (float): Coordinates of the second point.
-
-    Returns:
-    - float: The Cartesian distance between the two points.
-    """
-    print(np.array([x2, y2]).shape, np.array([x1, y1]).shape)
-    distance = np.linalg.norm(np.array([x2, y2]) - np.array([x1, y1]))
-    return distance
 
 def handleOCRtext(objects, final_array, ocr_counter):
-    #print(objects)
+    """ Once it detects the OCR text --> 
+        1. Get screenshot
+        2. Solve CAPTCHA
+        3. Click on cell and complete the sollution
+        4. Click on Confirm button
+        5. Return True: screenshot counter increment
+    """
     label_18_OCRText = objects[objects[:, 5] == 18] # 18 -> OCRText
-    print(label_18_OCRText)
+    
+    if DEBUG:
+        print(label_18_OCRText)
+
     if len(label_18_OCRText) > 0:
         ocr_screenshot = screenshot_array(label_18_OCRText[0][0], label_18_OCRText[0][1], label_18_OCRText[0][2], label_18_OCRText[0][3], ocr_counter)
         Numbers = getText(ocr_screenshot)
         if len(Numbers) == 4:
+            # TODO: Use Dictionary and not hardcoded integers
             label_7_OCRText = final_array[final_array[:, 3] == 7] # 7: 'TextFieldToBotQuestion'
             label_4_OCRText = final_array[final_array[:, 3] == 4] # 4: 'TextFieldToBotQuestion'
             if(len(label_7_OCRText) > 0 and len(label_4_OCRText) > 0):
-                click(label_7_OCRText[0][0], label_7_OCRText[0][1])
+                pyautogui.click(label_7_OCRText[0][0], label_7_OCRText[0][1])
                 time.sleep(random.randint(1, 3))
                 pyautogui.typewrite(Numbers)
                 time.sleep(random.randint(1, 3))
                 pyautogui.click(label_4_OCRText[0][0], label_4_OCRText[0][1])
                 return True
     return False
-
-
 
 def delete_folder(folder_path):
     """
@@ -177,12 +143,12 @@ def delete_folder(folder_path):
         return True  # Return True because the folder doesn't exist, no action required
 
 
-
-# Example usage:
+# This is not working runs only created in project parent directory
 folder_path = get_app_path("last_detection/")
-# delete_folder(folder_path)
 
 def moveTo_z_points(x_left, y_top, x_right, y_bottom, point_code=None):
+    """ Clicks on the corners of the map
+    """
     if point_code is None:
         point_code = random.randint(1, 4)
 
@@ -203,6 +169,8 @@ def moveTo_z_points(x_left, y_top, x_right, y_bottom, point_code=None):
     pyautogui.mouseUp()
 
 def check_navigation_eligibility(label_17_map, order):
+    """ Checks the map to navigate in the next spot if only last execution time has passed 30 seconds
+    """
     global last_execution_time
     current_time = time.time()
     if current_time - last_execution_time >= 30:
@@ -215,6 +183,8 @@ def check_navigation_eligibility(label_17_map, order):
             pyautogui.click((order[1], order[2]))
 
 def getScreenshot():
+    """ Get the WHOLE screen capture
+    """
     img = pyautogui.screenshot()
     img_np = np.array(img)
     screen_bgr = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
@@ -222,6 +192,8 @@ def getScreenshot():
 
 
 def getTimeSleep(distance_in_pixels):
+    """ Calculates the seconds that the boat will need to catch a glitter + safety time 2 secs
+    """
     if(distance_in_pixels!=None and distance_in_pixels!=0):
         x=distance_in_pixels
         u=72 #pixels/second
@@ -229,23 +201,29 @@ def getTimeSleep(distance_in_pixels):
         if(t==float('inf')): return 0
         else: return max(0,t)
 
-global screen_bgr 
-global last_execution_time
+
 
 def predict(folder_path_to_read, model=YOLO(absolute_path_object_model_2000px_windows)):
-    #folder_path_to_read = r'C:\Users\Marios\Desktop\Μάριος\BotBattleOfSea\src\ObjectDetections'
+    """ Based on the trained model --> detect and return the objects
+        #!!must conf=0.15: Accuracy of the model
+
+        TODO: model2 with imgsz=600 to detect only the window area in order to constrain the click area
+    """
     delete_folder(folder_path)
-    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=True, save_txt=False, imgsz=2000)  # returns Results objects #!!must conf=0.15
+    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=True, save_txt=False, imgsz=2000)  
     for result in results:
         boxes = result.boxes.cpu().numpy().data # Boxes object for bounding box outputs
         Dictionary=result.names
-        print(f"--->{Dictionary}")
-        print(f"results--->{result}")
+
+        if DEBUG:
+            print(f"--->{Dictionary}")
+            print(f"results--->{result}")
     
         return boxes, Dictionary
     
 
 def getCenterOfBoxes(ObjectArray):
+    ""
     #print(ObjectArray)
     center_x = (ObjectArray[:, 0] + ObjectArray[:, 2]) / 2
     center_y = (ObjectArray[:, 1] + ObjectArray[:, 3]) / 2
@@ -265,7 +243,6 @@ def getCenterOfBoxes(ObjectArray):
     return ObjectArray
 
 
-#sort array function:
 def sort_array_by_column(array, column_index):
     """
     Sorts the given array based on the values in the specified column.
@@ -288,9 +265,13 @@ def sort_array_by_column(array, column_index):
     return sorted_array
 
 def reverse_dict(input_dict):
+    """
+    """
     return {value: key for key, value in input_dict.items()}
 
 def nearest_glitter_or_random_glitter(final_array_sorted, object_dict):
+    """ Checks if there is any glitter on the scene else gives the navigation coordinates (offseted coordinates from corner)
+    """
     object_dict = reverse_dict(object_dict)
     # Accessing the labels directly from the object_dict using their names
     label_14_glitters = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitter']] #14 -> glitter
@@ -336,26 +317,9 @@ def nearest_glitter_or_random_glitter(final_array_sorted, object_dict):
         x=label_03_stableCam[0][0]
         y=label_03_stableCam[0][1]-50
         return 'navigation',x,y
-    #navigation--------
-    
-
+   
     return None
 
-
-# objects= predict(get_app_path("ObjectDetections")) #this is only for debugging purposes
-
-
-# final_array = getCenterOfBoxes(objects)
-
-# if(handleOCRtext(objects, final_array, ocr_counter)):
-#     ocr_counter=ocr_counter+1
-
-# sorted_array = sort_array_by_column(final_array,2) #2nd column is the column of distances
-
-# order = nearest_glitter_or_random_glitter(sorted_array)
-# if(order is not None and order[0]=='glitterToClick'):
-#     pyautogui.moveTo((order[1],order[2]))g
-#     print(order) #None if there is no Ship / x and y if exist both / x and y if only glitter exist
 
 run = True
 pyautogui.FAILSAFE = False #to move the mouse in corner (0,0)
