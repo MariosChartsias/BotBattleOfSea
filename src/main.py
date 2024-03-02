@@ -173,14 +173,14 @@ def delete_folder(folder_path):
             #print(f"Error deleting the folder '{folder_path}': {e}")
             return False
     else:
-        #print(f"The folder '{folder_path}' does not exist.")
+        #print(f"The folder '{folder_path}' does not exist.")ws
         return True  # Return True because the folder doesn't exist, no action required
 
 
 
 # Example usage:
-folder_path = get_app_path("runs")
-delete_folder(folder_path)
+folder_path = get_app_path("last_detection/")
+# delete_folder(folder_path)
 
 def moveTo_z_points(x_left, y_top, x_right, y_bottom, point_code=None):
     if point_code is None:
@@ -232,10 +232,10 @@ def getTimeSleep(distance_in_pixels):
 global screen_bgr 
 global last_execution_time
 
-def predict(folder_path_to_read,model=YOLO(absolute_path_object_model_2000px_windows)):
+def predict(folder_path_to_read, model=YOLO(absolute_path_object_model_2000px_windows)):
     #folder_path_to_read = r'C:\Users\Marios\Desktop\Μάριος\BotBattleOfSea\src\ObjectDetections'
     delete_folder(folder_path)
-    results = model(folder_path_to_read, stream=True , conf=0.15, retina_masks=True , save=True, save_txt=False, imgsz=2000)  # returns Results objects #!!must conf=0.15
+    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=True, save_txt=False, imgsz=2000)  # returns Results objects #!!must conf=0.15
     for result in results:
         boxes = result.boxes.cpu().numpy().data # Boxes object for bounding box outputs
         Dictionary=result.names
@@ -336,25 +336,26 @@ def nearest_glitter_or_random_glitter(final_array_sorted):
     return None
 
 
-objects= predict(get_app_path("ObjectDetections")) #this is only for debugging purposes
+# objects= predict(get_app_path("ObjectDetections")) #this is only for debugging purposes
 
 
-ocr_counter=1
-final_array = getCenterOfBoxes(objects)
+# final_array = getCenterOfBoxes(objects)
 
-if(handleOCRtext(objects, final_array, ocr_counter)):
-    ocr_counter=ocr_counter+1
+# if(handleOCRtext(objects, final_array, ocr_counter)):
+#     ocr_counter=ocr_counter+1
 
-sorted_array = sort_array_by_column(final_array,2) #2nd column is the column of distances
+# sorted_array = sort_array_by_column(final_array,2) #2nd column is the column of distances
 
-order = nearest_glitter_or_random_glitter(sorted_array)
-if(order is not None and order[0]=='glitterToClick'):
-    pyautogui.moveTo((order[1],order[2]))
-    print(order) #None if there is no Ship / x and y if exist both / x and y if only glitter exist
+# order = nearest_glitter_or_random_glitter(sorted_array)
+# if(order is not None and order[0]=='glitterToClick'):
+#     pyautogui.moveTo((order[1],order[2]))g
+#     print(order) #None if there is no Ship / x and y if exist both / x and y if only glitter exist
 
 run = True
 pyautogui.FAILSAFE = False #to move the mouse in corner (0,0)
 last_execution_time = time.time()-30
+ocr_counter=1
+
 
 while run:
     
