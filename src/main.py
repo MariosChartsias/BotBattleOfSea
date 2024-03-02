@@ -240,7 +240,9 @@ def predict(folder_path_to_read, model=YOLO(absolute_path_object_model_2000px_wi
         boxes = result.boxes.cpu().numpy().data # Boxes object for bounding box outputs
         Dictionary=result.names
         print(f"--->{Dictionary}")
-        return boxes
+        print(f"results--->{result}")
+    
+        return boxes, Dictionary
     
 
 def getCenterOfBoxes(ObjectArray):
@@ -285,14 +287,18 @@ def sort_array_by_column(array, column_index):
 
     return sorted_array
 
-def nearest_glitter_or_random_glitter(final_array_sorted):
-    label_14_glitters = final_array_sorted[final_array_sorted[:, 3] == 14] #14 -> glitter
-    print(label_14_glitters)
-    label_15_glitter_clicked = final_array_sorted[final_array_sorted[:, 3] == 15] #15 -> the label of glitter clicked
-    label_03_stableCam = final_array_sorted[final_array_sorted[:, 3] == 3] #3: -> the label of CenterMyBoat 
-    label_19_pointOfMoving = final_array_sorted[final_array_sorted[:, 3] == 19] #19 -> pointOfMoving 
-    label_06_myShip = final_array_sorted[final_array_sorted[:, 3] == 6] #6 -> MyShip
-    label_17_map = final_array_sorted[final_array_sorted[:, 3] == 17] # 17 -> map
+def reverse_dict(input_dict):
+    return {value: key for key, value in input_dict.items()}
+
+def nearest_glitter_or_random_glitter(final_array_sorted, object_dict):
+    object_dict = reverse_dict(object_dict)
+    # Accessing the labels directly from the object_dict using their names
+    label_14_glitters = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitter']] #14 -> glitter
+    label_15_glitter_clicked = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitterClicked']] #15 -> the label of glitter clicked
+    label_03_stableCam = final_array_sorted[final_array_sorted[:, 3] == object_dict['CenterMyBoat']] #3 -> CenterMyBoat
+    label_19_pointOfMoving = final_array_sorted[final_array_sorted[:, 3] == object_dict['pointOfMoving']] #19 -> pointOfMoving
+    label_06_myShip = final_array_sorted[final_array_sorted[:, 3] == object_dict['MyShip']] #6 -> MyShip
+    label_17_map = final_array_sorted[final_array_sorted[:, 3] == object_dict['map']] #17 -> map
     
     isGlitter = len(label_14_glitters)>0
     isGlitterClicked = len(label_15_glitter_clicked)>0
@@ -359,7 +365,9 @@ ocr_counter=1
 
 while run:
     
-    objects= predict(getScreenshot())
+    objects, objects_dict= predict(getScreenshot())
+
+    print(objects)
    
     if objects.size!=0:
         
@@ -371,7 +379,7 @@ while run:
         sorted_array = sort_array_by_column(final_array,2) #2nd column is the column of distances
 
         print(sorted_array)
-        order = nearest_glitter_or_random_glitter(sorted_array)
+        order = nearest_glitter_or_random_glitter(sorted_array, objects_dict)
         
 
         print(order) #None if there is no Ship /
