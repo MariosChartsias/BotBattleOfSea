@@ -1,25 +1,23 @@
-# TrainModel process of dataset
+# Model Training Process for Dataset
 
-This page contains all the related info on how to train the model in Google Colaboratory
+This repository contains instructions and code for training your model using Google Colaboratory.
 
-You run the first cell and by upload select the zip file that you have already downloaded from roboflow.
- At right corner you see the gpu or cpu that you use for training A100 is for premium users with ram 40GB
- T4 is free version with 15GB
-![alt text](image.png)
+## Getting Started
 
-wait until this completes successfully
-![alt text](image-1.png)
+1. **Upload Dataset**: Run the first cell and upload the zip file containing your dataset from Roboflow.
+   - Premium users have access to A100 GPU with 40GB RAM, while the free version offers T4 GPU with 15GB RAM.
+   ![Upload Dataset](image.png)
 
-after that you can see the zip file. The code bellow unzip the file and define a function to change the encoding
-for the testing (no need to do that in locally) because of the google colaboratory preselected settings
-![alt text](image-2.png)
+2. **Wait for Completion**: Allow the process to complete successfully.
+   ![Process Completion](image-1.png)
 
-as you can see the file unziped to the folder:
+3. **Unzipping and Encoding**: Once completed, find the zip file. The provided code unzips the file and modifies the encoding. Note: This step isn't required locally due to preselected configurations in Google Colaboratory.
+   ![Unzipping and Encoding](image-2.png)
 
-![alt text](image-3.png)
+4. **Folder Organization**: The unzipped files are organized within the designated folder:
+   ![Folder Organization](image-3.png)
 
-then you run the pip install and when this completes you choose the other cell to run the training
-epochs are the loops
-imgsz is the analysis (px) of the images that you probably need to detect 
-in our case we have glitters in pixel size (80*100), so the larger the imgsz is the better results would give
-![alt text](image-4.png)
+5. **Installation and Training**: Run the pip install command. Then select the subsequent cell to begin training.
+   - **Epochs**: Number of loops.
+   - **imgsz**: Image analysis (in pixels). Larger values yield better results, especially for fine details like glitters (e.g., with a pixel size of 80x100).
+   ![Installation and Training](image-4.png)
