@@ -1,0 +1,18 @@
+{
+    "database": "dbproxy",
+    "dblocal": {
+		"host" : "127.0.0.1",
+		"user" : "root",
+		"port": 3306,
+		"password" : "74c96!f45hj",
+		"database" : "realestator"
+	},
+    "dbproxy": 
+	{
+		"host": "bpjeb9kaly6ytzb8rbv9-mysql.services.clever-cloud.com",
+		"user": "uwhmzo9osukxo17g",
+		"port": 21623,
+		"password": "YhsLR9q3TPFzMbGxljVg",
+		"database": "bpjeb9kaly6ytzb8rbv9"
+	}
+}
