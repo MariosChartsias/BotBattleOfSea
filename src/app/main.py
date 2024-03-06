@@ -5,7 +5,6 @@ import pyautogui
 from ultralytics import YOLO
 from win32api import GetSystemMetrics
 import time
-from Paths import *
 import os
 import shutil
 import random
@@ -40,7 +39,7 @@ def screenshot_array(x1, y1, x2, y2,i):
 
 
 #this absolute path works only for ipynb and not for the actual Tools.py file
-def getText(screenshot_array_format,modelOCR=YOLO(absolute_path_ocr_model_640px_windows)):
+def getText(screenshot_array_format,modelOCR=YOLO(get_app_path("models/yolov8_ocr_640px.pt"))):
     """ It receives screenshot numpy array and generates the coresponding CAPTCHA sollution
     """
     results = modelOCR.predict(screenshot_array_format,imgsz=640, conf=0.2)
@@ -204,14 +203,14 @@ def getTimeSleep(distance_in_pixels):
 
 
 
-def predict(folder_path_to_read, model=YOLO(absolute_path_object_model_2000px_windows)):
+def predict(folder_path_to_read, model=YOLO(get_app_path("models/yolov8_2000px.pt"))):
     """ Based on the trained model --> detect and return the objects
         #!!must conf=0.15: Accuracy of the model
 
         TODO: model2 with imgsz=600 to detect only the window area in order to constrain the click area
     """
     delete_folder(folder_path)
-    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=True, save_txt=False, imgsz=2000)  
+    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=False, save_txt=False, imgsz=2016)  
     for result in results:
         boxes = result.boxes.cpu().numpy().data # Boxes object for bounding box outputs
         Dictionary=result.names

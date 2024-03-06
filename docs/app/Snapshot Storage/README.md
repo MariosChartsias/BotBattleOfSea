@@ -1,0 +1,1 @@
+This Folder contains the DataImages before setting it into Roboflow
