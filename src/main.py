@@ -5,18 +5,29 @@ import pyautogui
 from ultralytics import YOLO
 from win32api import GetSystemMetrics
 import time
-from Paths import *
+
 import os
 import shutil
 import random
 
 from utils.get_os_paths import *
 
+from utils.get_os_paths import *
+
+absolute_path_ocr_model_640px_windows = get_app_path("models\\yolov8_ocr_640px.pt")
+absolute_path_object_model_1640px_windows = get_app_path("models\\yolov8_1640px.pt")
+absolute_path_object_model_2000px_windows = get_app_path("models\\yolov8_2000px.pt")
+
+relative_path_object_model_1640px_windows = get_app_path("models\\yolov8_1640px.pt")
+relative_path_object_model_2000px_windows = get_app_path("models\\yolov8_2000px.pt")
+relative_path_ocr_model_640px_windows = get_app_path("models\\yolov8_ocr_640px.pt")
+
 global screen_bgr 
 global last_execution_time
 
 time_of_pause=0
-DEBUG = True
+DEBUG = False
+DEBUG_IMG = False
 
 def screenshot_array(x1, y1, x2, y2,i):
     """ Convert screenshot picture of OCR to numpy array
@@ -33,17 +44,18 @@ def screenshot_array(x1, y1, x2, y2,i):
     # Take a screenshot of the expanded region
     screenshot = pyautogui.screenshot(region=(x1, y1, x2 - x1, y2 - y1))
     screenshot.save(get_app_path(f'OcrTexts\\OCRtext{i}.png'))
-
-    print("function: screenshot_array")  # for debugging only
+    if DEBUG:
+        print("function: screenshot_array")  # for debugging only
     time.sleep(time_of_pause)  # for debugging only
     return np.array(screenshot)
 
 
 #this absolute path works only for ipynb and not for the actual Tools.py file
-def getText(screenshot_array_format,modelOCR=YOLO(absolute_path_ocr_model_640px_windows)):
+def getText(screenshot_array_format, modelOCR=YOLO(absolute_path_ocr_model_640px_windows)):
     """ It receives screenshot numpy array and generates the coresponding CAPTCHA sollution
     """
-    results = modelOCR.predict(screenshot_array_format,imgsz=640, conf=0.2)
+    # model = YOLO(absolute_path_object_model_2000px_windows)
+    results = modelOCR.predict(screenshot_array_format, imgsz=640, conf=0.2)
     boxes = results[0].boxes.xyxy.cpu()
     clss = results[0].boxes.cls.cpu().tolist()
     Dictionary = results[0].names
@@ -133,7 +145,8 @@ def delete_folder(folder_path):
     if os.path.exists(folder_path):
         try:
             shutil.rmtree(folder_path)
-            print(f"The folder '{folder_path}' has been deleted.")
+            if DEBUG:
+                print(f"The folder '{folder_path}' has been deleted.")
             return True
         except Exception as e:
             #print(f"Error deleting the folder '{folder_path}': {e}")
@@ -168,19 +181,19 @@ def moveTo_z_points(x_left, y_top, x_right, y_bottom, point_code=None):
     pyautogui.mouseDown()
     pyautogui.mouseUp()
 
-def check_navigation_eligibility(label_17_map, order):
+def check_navigation_eligibility(map, command):
     """ Checks the map to navigate in the next spot if only last execution time has passed 30 seconds
     """
     global last_execution_time
     current_time = time.time()
     if current_time - last_execution_time >= 30:
         last_execution_time = current_time
-        if len(label_17_map) > 0:
-            x_left, y_top = label_17_map[0][0] + 10, label_17_map[0][1] + 10
-            x_right, y_bottom = label_17_map[0][2] - 10, label_17_map[0][3] - 10
+        if len(map) > 0:
+            x_left, y_top = map[0][0] + 10, map[0][1] + 10
+            x_right, y_bottom = map[0][2] - 10, map[0][3] - 10
             moveTo_z_points(x_left, y_top, x_right, y_bottom)
             time.sleep(1)
-            pyautogui.click((order[1], order[2]))
+            pyautogui.click((command[1], command[2]))
 
 def getScreenshot():
     """ Get the WHOLE screen capture
@@ -188,6 +201,11 @@ def getScreenshot():
     img = pyautogui.screenshot()
     img_np = np.array(img)
     screen_bgr = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
+
+    if DEBUG_IMG:
+        cv2.imshow("Screenshot", screen_bgr)
+        cv2.waitKey(0)  # Waits until a key is pressed
+
     return screen_bgr
 
 
@@ -196,28 +214,32 @@ def getTimeSleep(distance_in_pixels):
     """
     if(distance_in_pixels!=None and distance_in_pixels!=0):
         x=distance_in_pixels
-        u=72 #pixels/second
+        u=80 #pixels/second
         t=x/u
         if(t==float('inf')): return 0
         else: return max(0,t)
 
 
 
-def predict(folder_path_to_read, model=YOLO(absolute_path_object_model_2000px_windows)):
+def predict(folder_path_to_read, model):
     """ Based on the trained model --> detect and return the objects
         #!!must conf=0.15: Accuracy of the model
 
-        TODO: model2 with imgsz=600 to detect only the window area in order to constrain the click area
+        TODO: model2 with imgsz=600 to detect only the window area in order to constrain the click area --> Update: Detect if full screen only
     """
-    delete_folder(folder_path)
-    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=True, save_txt=False, imgsz=2000)  
+   
+    # delete_folder(folder_path)
+
+    results = model(folder_path_to_read, save_dir = folder_path, stream=True , conf=0.15, retina_masks=True , save=False, save_txt=False, imgsz=2016)  
+    
     for result in results:
         boxes = result.boxes.cpu().numpy().data # Boxes object for bounding box outputs
         Dictionary=result.names
 
         if DEBUG:
-            print(f"--->{Dictionary}")
+            print(f"Dictionary--->{Dictionary}")
             print(f"results--->{result}")
+            print(f"Boxes--->{boxes}")
     
         return boxes, Dictionary
     
@@ -274,22 +296,23 @@ def nearest_glitter_or_random_glitter(final_array_sorted, object_dict):
     """
     object_dict = reverse_dict(object_dict)
     # Accessing the labels directly from the object_dict using their names
-    label_14_glitters = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitter']] #14 -> glitter
-    label_15_glitter_clicked = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitterClicked']] #15 -> the label of glitter clicked
-    label_03_stableCam = final_array_sorted[final_array_sorted[:, 3] == object_dict['CenterMyBoat']] #3 -> CenterMyBoat
-    label_19_pointOfMoving = final_array_sorted[final_array_sorted[:, 3] == object_dict['pointOfMoving']] #19 -> pointOfMoving
-    label_06_myShip = final_array_sorted[final_array_sorted[:, 3] == object_dict['MyShip']] #6 -> MyShip
-    label_17_map = final_array_sorted[final_array_sorted[:, 3] == object_dict['map']] #17 -> map
+    glitters_list = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitter']] 
+    glitters_clicked_list = final_array_sorted[final_array_sorted[:, 3] == object_dict['glitterClicked']] 
+    stableCam_list = final_array_sorted[final_array_sorted[:, 3] == object_dict['CenterMyBoat']] 
+    pointOfMoving = final_array_sorted[final_array_sorted[:, 3] == object_dict['pointOfMoving']] 
+    myShip = final_array_sorted[final_array_sorted[:, 3] == object_dict['MyShip']]
+    map = final_array_sorted[final_array_sorted[:, 3] == object_dict['map']]
     
-    isGlitter = len(label_14_glitters)>0
-    isGlitterClicked = len(label_15_glitter_clicked)>0
-    isCameraMoving = len(label_03_stableCam)==0
-    isBoatMoving = len(label_19_pointOfMoving)>0
-    isPOVonScreen = len(label_06_myShip)>0
-    isMapAvailable =  len(label_17_map)>0
+    isGlitter = len(glitters_list)>0
+    isGlitterClicked = len(glitters_clicked_list) > 0
+    isCameraMoving = len(stableCam_list)==0
+    isBoatMoving = len(pointOfMoving)>0
+    isPOVonScreen = len(myShip)>0
+    isMapAvailable =  len(map)>0
     
-    print(f"case1:({isGlitter} or {isGlitterClicked}) and {isCameraMoving}")
-    print(f"case2:({not isGlitter} and {not isCameraMoving})")
+    if DEBUG:
+        print(f"case1:({isGlitter} or {isGlitterClicked}) and {isCameraMoving}")
+        print(f"case2:({not isGlitter} and {not isCameraMoving})")
 
     if(isGlitter or isGlitterClicked) and isCameraMoving: #this will stable the camera and retake screenshot
         stableCam()  
@@ -302,20 +325,23 @@ def nearest_glitter_or_random_glitter(final_array_sorted, object_dict):
     elif(not isGlitter and not isGlitterClicked):
         if time.time() - last_execution_time >= 30:
             stableCam()
-
-        
+     
     if(isGlitterClicked):
-        time.sleep(4) #this is the time of waiting until the clicked glitter dissappears
+        # x=glitters_clicked_list[0][0]
+        # y=glitters_clicked_list[0][1]
+        # distance = glitters_clicked_list[0][2]
+        # return 'glitterToClick',x,y,distance
+        time.sleep(4) #this is the time of waiting in order to get flitter under fish
         return None
     
     elif isGlitter: # Check if there are any glitters 
-        x=label_14_glitters[0][0]
-        y=label_14_glitters[0][1]
-        distance = label_14_glitters[0][2]
+        x=glitters_list[0][0]
+        y=glitters_list[0][1]
+        distance = glitters_list[0][2]
         return 'glitterToClick',x,y,distance
     elif not isGlitter and not isCameraMoving:
-        x=label_03_stableCam[0][0]
-        y=label_03_stableCam[0][1]-50
+        x=stableCam_list[0][0]
+        y=stableCam_list[0][1]-50
         return 'navigation',x,y
    
     return None
@@ -325,41 +351,47 @@ run = True
 pyautogui.FAILSAFE = False #to move the mouse in corner (0,0)
 last_execution_time = time.time()-30
 ocr_counter=1
-
+model = YOLO(absolute_path_object_model_2000px_windows) # path to trained model
 
 while run:
-    
-    objects, objects_dict= predict(getScreenshot())
 
-    print(objects)
+    start_time = time.time()
+    objects, objects_dict= predict(getScreenshot(), model)
+    end_time = time.time()
+    print(f"Execution time before optimization: {end_time - start_time} seconds")
+
+    # print(f"objects: {objects}")
    
     if objects.size!=0:
         
         final_array = getCenterOfBoxes(objects)
-        #print(final_array)
+        # print(f"final array: {final_array}")
+
         if(handleOCRtext(objects, final_array, ocr_counter)):
             ocr_counter=ocr_counter+1
 
-        sorted_array = sort_array_by_column(final_array,2) #2nd column is the column of distances
+        # 2nd column is the column of distances
+        sorted_array = sort_array_by_column(final_array, 2) 
+        # print(f"sorted array: {sorted_array}")
 
-        print(sorted_array)
-        order = nearest_glitter_or_random_glitter(sorted_array, objects_dict)
-        
 
-        print(order) #None if there is no Ship /
-        if(order is not None and order[0]=='glitterToClick'):
-            pyautogui.click((order[1],order[2]))
-            pyautogui.moveTo(0, 0, duration=0)
-            last_execution_time = time.time()-30
-            time.sleep(getTimeSleep(order[3]))
-        elif(order is not None and order[0]=='navigation'):
+        command = nearest_glitter_or_random_glitter(sorted_array, objects_dict)
+        # print(f"Command: {command}")
+
+        if(command is not None and command[0]=='glitterToClick'):
+            pyautogui.click((command[1], command[2]))
+            pyautogui.moveTo(0, 0, duration = 0)
+            last_execution_time = time.time() - 30
+            time.sleep(getTimeSleep(command[3])) # This is the calculated time to wait until to get the glitter
+            # wait_until_glitter_changes_or_timeout((command[1], command[2]), getTimeSleep(command[3]))
+        elif(command is not None and command[0]=='navigation'):
             navigation_trigger=True
             isShipOnScreen = len(final_array[final_array[:, 3] == 6])>0 #6 -> MyShip
             isPOVonScreen = len(final_array[final_array[:, 3] == 19])>0 #19 -> pointOfMoving 
             if(isShipOnScreen and isPOVonScreen):   
                  last_execution_time = time.time()-30
-            label_17_map = objects[objects[:, 5] == 17] # 17 -> map
-            check_navigation_eligibility(label_17_map, order)
+            map = objects[objects[:, 5] == 17] # 17 -> map
+            check_navigation_eligibility(map, command)
             
 
     if keyboard.is_pressed('esc'):
