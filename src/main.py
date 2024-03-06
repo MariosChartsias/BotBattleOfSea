@@ -16,7 +16,7 @@ global screen_bgr
 global last_execution_time
 
 time_of_pause=0
-DEBUG = True
+DEBUG = False
 
 def screenshot_array(x1, y1, x2, y2,i):
     """ Convert screenshot picture of OCR to numpy array
@@ -33,8 +33,8 @@ def screenshot_array(x1, y1, x2, y2,i):
     # Take a screenshot of the expanded region
     screenshot = pyautogui.screenshot(region=(x1, y1, x2 - x1, y2 - y1))
     screenshot.save(get_app_path(f'OcrTexts\\OCRtext{i}.png'))
-
-    print("function: screenshot_array")  # for debugging only
+    if DEBUG:
+        print("function: screenshot_array")  # for debugging only
     time.sleep(time_of_pause)  # for debugging only
     return np.array(screenshot)
 
@@ -133,7 +133,8 @@ def delete_folder(folder_path):
     if os.path.exists(folder_path):
         try:
             shutil.rmtree(folder_path)
-            print(f"The folder '{folder_path}' has been deleted.")
+            if DEBUG:
+                print(f"The folder '{folder_path}' has been deleted.")
             return True
         except Exception as e:
             #print(f"Error deleting the folder '{folder_path}': {e}")
@@ -288,8 +289,9 @@ def nearest_glitter_or_random_glitter(final_array_sorted, object_dict):
     isPOVonScreen = len(label_06_myShip)>0
     isMapAvailable =  len(label_17_map)>0
     
-    print(f"case1:({isGlitter} or {isGlitterClicked}) and {isCameraMoving}")
-    print(f"case2:({not isGlitter} and {not isCameraMoving})")
+    if DEBUG:
+        print(f"case1:({isGlitter} or {isGlitterClicked}) and {isCameraMoving}")
+        print(f"case2:({not isGlitter} and {not isCameraMoving})")
 
     if(isGlitter or isGlitterClicked) and isCameraMoving: #this will stable the camera and retake screenshot
         stableCam()  
@@ -329,9 +331,13 @@ ocr_counter=1
 
 while run:
     
+    start_time = time.time()
     objects, objects_dict= predict(getScreenshot())
-
-    print(objects)
+    end_time = time.time()
+    print(f"Execution time before optimization: {end_time - start_time} seconds")
+    
+    if DEBUG:
+        print(objects)
    
     if objects.size!=0:
         
@@ -342,11 +348,12 @@ while run:
 
         sorted_array = sort_array_by_column(final_array,2) #2nd column is the column of distances
 
-        print(sorted_array)
+        if DEBUG:
+            print(sorted_array)
         order = nearest_glitter_or_random_glitter(sorted_array, objects_dict)
         
-
-        print(order) #None if there is no Ship /
+        if DEBUG:
+            print(order) #None if there is no Ship /
         if(order is not None and order[0]=='glitterToClick'):
             pyautogui.click((order[1],order[2]))
             pyautogui.moveTo(0, 0, duration=0)
