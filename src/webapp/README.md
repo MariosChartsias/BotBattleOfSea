@@ -1,3 +1,4 @@
 # WebBattleOfSea
  
-* VS-Code setup: [Link](docs/vscode_setup/README.md)
+ 
+* VS-Code setup: [Link](docs\webapp\README.md)
