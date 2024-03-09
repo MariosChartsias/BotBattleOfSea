@@ -8,12 +8,13 @@ def process():
     # Process the data received from the external system
     # For example, you can validate the data, store it in a database, etc.
     # Then return a response
-    if all(key in data for key in ['username', 'email', 'password', 'confirm_password']):
+    if all(key in data for key in ['username', 'email', 'password', 'confirm_password','checkBoxTerms']):
         # Example processing
         username = data['username']
         email = data['email']
         password = data['password']
         confirm_password = data['confirm_password']
+        check_box = data['checkBoxTerms']
         
         # Do whatever processing you need here
         
