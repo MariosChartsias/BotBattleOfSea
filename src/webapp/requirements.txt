@@ -1,2 +1,7 @@
 Flask
 requests
+gunicorn
+waitress
+sqlalchemy
+mysql-connector-python
+email-validator

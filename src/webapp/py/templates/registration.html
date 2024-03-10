@@ -7,28 +7,66 @@
     <!-- Load Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Hide overflow to prevent scrollbars */
+        background-color: #b7b9c5;
+    }
+
+    svg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw; /* Full width of viewport */
+        height: 100vh; /* Full height of viewport */
+        z-index: -1; /* Ensure SVG is behind other content */
+    }
+
+    path {
+        fill: none;
+        stroke: #8a872c; /* Line color */
+        stroke-width: 0.3; /* Line thickness */
+        stroke-linecap: round; /* Rounded line ends */
+    }
+</style>
 <body>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M-10 70 Q 15 90, 40 70 Q 65 50, 90 70 Q 115 90, 140 70 Q 165 50, 190 70 Q 215 90, 240 70 Q 265 50, 290 70" />
+    </svg>
 <div class="container">
     <h2 class="mt-5">Registration Form</h2>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flash-messages text-danger d-inline-flex p-3">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
     <form action="/register" method="POST">
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" value="{{ username }}">
         </div>
         <div class="form-group">
             <label for="email">Email address</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" value="{{ email }}">
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" value="{{ password }}">
         </div>
         <div class="form-group">
             <label for="confirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm password">
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm password"  value="{{ confirm_password }}">
         </div>
         <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="termsCheck" name="checkBoxTerms">
+            <input type="checkbox" class="form-check-input" id="termsCheck" name="checkBoxTerms" value="{{ confirm_password }}">
             <label class="form-check-label" for="termsCheck">I agree to the <span id="termsLink" style="color: blue; text-decoration: underline; cursor: pointer;">Terms and Conditions</span></label>
         </div>
         <button type="submit" class="btn btn-primary float-right">Register</button>
@@ -49,5 +87,6 @@
         </div>
     </div>
 </div>
+
 
 <!-- Load Bootstrap JavaScript -->
