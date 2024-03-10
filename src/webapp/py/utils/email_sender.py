@@ -4,17 +4,17 @@ from email.mime.multipart import MIMEMultipart
 
 class EmailSender:
     def __init__(self):
-        self.smtp_server = 'smtp-mail.outlook.com'
-        self.smtp_port = 587
-        self.sender_email = 'p.menounos@outlook.com'
-        self.sender_password = 'Kith@r@1996!'
+        self.smtp_server = 'smtpout.europe.secureserver.net' #'smtp-mail.outlook.com'
+        self.smtp_port = 465 #587
+        self.sender_email = 'info@playbotworld.com'
+        self.sender_password = 'rT3$y9p2#x!'
 
-    def send_email(self, email2send, verif_code):
+    def send_email(self, recipient_email, verif_code):
         # Create a message object
         message = MIMEMultipart()
         message['From'] = self.sender_email
-        message['To'] = email2send
-        message['Subject'] = 'RealEstator'
+        message['To'] = recipient_email
+        message['Subject'] = 'Please confirm your email address'
 
         # Add the email body
         body = verif_code
@@ -28,7 +28,14 @@ class EmailSender:
             # Send the email
             server.send_message(message)
 
+            # Send email
+            server.sendmail(self.sender_email, recipient_email, message.as_string())
+        
+        print("Email sent successfully!")
+
 
 if __name__ == '__main__':
     email_sender = EmailSender()
-    email_sender.send_email()
+    email_sender.send_email('mytoplux@gmail.com','geia')
+
+
