@@ -30,13 +30,13 @@ class userDao(object):
 
         
 
-    def set_personal_data(self, email, password, user_id):
+    def set_personal_data(self, email, password):
         """Set personal data in the database."""
         try:
             # Construct the SQL insert statement with placeholders
-            sql = text("INSERT INTO BOS_C01_PERSONAL_DATA (C01_EMAIL, C01_PASSWORD, C01_USERID) VALUES (:email, :password, :user_id)")
+            sql = text("INSERT INTO BOS_C01_PERSONAL_DATA (C01_EMAIL, C01_PASSWORD) VALUES (:email, :password)")
             # Execute the insert statement with parameter binding
-            self.session.execute(sql, {"email": email, "password": password, "user_id": user_id})
+            self.session.execute(sql, {"email": email, "password": password})
             # Commit the transaction
             self.session.commit()
         except Exception as e:
@@ -81,3 +81,27 @@ class userDao(object):
         finally:
             # Close the session
             self.close_session()
+
+    def activate_email(self, email):
+        print(email)
+        """Update the C01_IS_ACTIVATED column to 1 for the given email."""
+        try:
+            # Construct the SQL query to update the C01_IS_ACTIVATED column
+            sql = text("UPDATE BOS_C01_PERSONAL_DATA SET C01_IS_ACTIVATED = 1 WHERE C01_EMAIL = :email")
+            # Execute the query with parameter binding
+            self.session.execute(sql, {"email": email.strip()})
+            # Commit the transaction
+            self.session.commit()
+            # Return True indicating successful activation
+            return True
+        
+        except Exception as e:
+            # Rollback the transaction if an exception occurs
+            self.session.rollback()
+            # Handle any exceptions
+            print("Error activating email:", e)
+            return False
+        finally:
+            # Close the session
+            self.close_session()
+

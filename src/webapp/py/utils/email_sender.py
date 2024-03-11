@@ -3,6 +3,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from random import randint
 
+EMAIL_CONSTANT='info@playbotworld.com'
+PASS_CONSTANT='rT3$y9p2#x'
+
+
 class EmailSender:
     def __init__(self, sender_email, sender_password):
         self.sender_email = sender_email
@@ -34,5 +38,5 @@ class EmailSender:
 
 if __name__ == '__main__':
     # Example usage:
-    sender = EmailSender('info@playbotworld.com', 'rT3$y9p2#x') #email credentials
+    sender = EmailSender(EMAIL_CONSTANT, PASS_CONSTANT) #email credentials
     sender.send_email('mytoplux@gmail.com', 'Please activate your account', f'Your temporary code is {randint(1000,9999)} ')

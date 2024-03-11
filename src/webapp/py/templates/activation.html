@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Load Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* Hide overflow to prevent scrollbars */
+        background-color: #b7b9c5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Make body take full height of viewport */
+    }
+
+    svg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw; /* Full width of viewport */
+        height: 100vh; /* Full height of viewport */
+        z-index: -1; /* Ensure SVG is behind other content */
+    }
+
+    path {
+        fill: none;
+        stroke: #8a872c; /* Line color */
+        stroke-width: 0.3; /* Line thickness */
+        stroke-linecap: round; /* Rounded line ends */
+    }
+
+    .form-group {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<body>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M-10 70 Q 15 90, 40 70 Q 65 50, 90 70 Q 115 90, 140 70 Q 165 50, 190 70 Q 215 90, 240 70 Q 265 50, 290 70" />
+    </svg>
+
+    <div class="container">
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flash-messages text-danger d-inline-flex p-3">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+        
+<form action="/activate" method="POST" class="form-group">
+    <div class="form-group">
+        <label for="activation_code">Activation Code:</label>
+        <input type="text" name="activation_code" id="activation_code" class="form-control" placeholder="Enter your activation code" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Activate</button>
+</form>
+
+</div>
+</body>
+</html>
