@@ -15,9 +15,25 @@ app.secret_key = crypto.encrypt('encrypt')  # Set a secret key for flashing mess
 user_data = {}
 
 
-@app.route('/login')
+@app.route('/login', methods=['POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+    databaseAccessMechanism = userDao()
+    databaseAccessMechanism.open_session()
+    if(databaseAccessMechanism.areCredentialsCorrect(email,password)):
+        session['logged_in']=True
+        session['email']=email
+    else:
+        flash("This email and password do not match")
+    return render_template('index.html',logged_in=session.get('logged_in', False),username=session.get('email', False))
+
+@app.route('/logout')
+def logout():
+    session.clear()  # Clear the session data to log the user out
+    return redirect('/')  # Redirect to the main page after logging out
+
 
 @app.route('/registration')
 def registration():
@@ -25,7 +41,7 @@ def registration():
 
 @app.route('/')
 def main():
-    return render_template('index.html')
+    return render_template('index.html',logged_in=session.get('logged_in', False),username=session.get('email', False))
 
 @app.route('/register', methods=['POST'])
 def register():

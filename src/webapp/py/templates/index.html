@@ -4,43 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Add your CSS styles here */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            overflow: hidden; /* Hide overflow to prevent scrollbars */
+            background-color: #b7b9c5;
         }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
+    
+        svg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw; /* Full width of viewport */
+            height: 100vh; /* Full height of viewport */
+            z-index: -1; /* Ensure SVG is behind other content */
         }
-        header a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        header a:hover {
-            text-decoration: underline;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 0 20px;
+    
+        path {
+            fill: none;
+            stroke: #8a872c; /* Line color */
+            stroke-width: 0.3; /* Line thickness */
+            stroke-linecap: round; /* Rounded line ends */
         }
     </style>
+
 </head>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path d="M-10 70 Q 15 90, 40 70 Q 65 50, 90 70 Q 115 90, 140 70 Q 165 50, 190 70 Q 215 90, 240 70 Q 265 50, 290 70" />
+</svg>
 <body>
-    <header>
-        <a href="/registration">Register</a>
-        <a href="/login">Login</a>
+
+    <header class="bg-dark text-white py-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if logged_in %}
+                    <a href="/registration" class="btn btn-primary">Subscription</a> 
+                    
+                    {%else %}
+                    <h1>PlayBotWorld</h1>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="text-danger">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="col-md-4 text-right">
+                    {% if not logged_in %}
+                    <form class="form-inline" action="/login" method="POST">
+                        <input type="email" class="form-control mr-sm-2 mb-2 mb-md-0" name="email" placeholder="Email">
+                        {% if not logged_in %}
+                            <a href="/registration" class="btn btn-primary">Register</a> 
+                        {% endif %}
+                        <input type="password" class="form-control mr-sm-2 mb-2 mb-md-0" name="password" placeholder="Password">
+                        <button class="btn btn-success" type="submit">Login</button>
+                    </form>
+                    {% endif %}
+                    {% if logged_in %}
+                    <div class="text-success">
+                        {{ session.email }} 
+                    </div>
+                    <p class="mt-2 mb-0"><a href="/logout" class="btn btn-danger">Logout</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </header>
-    <div class="container">
-        <!-- Add your content here -->
-        <h1>Welcome to my website</h1>
-        <p>This is a simple example of an index page.</p>
+    
+    
+
+
+    
+    
+    
+    <div class="container mt-5">
+        <h2>login if you want <b>access</b> to our products</h2>
     </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

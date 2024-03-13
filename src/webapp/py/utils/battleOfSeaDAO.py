@@ -64,7 +64,7 @@ class userDao(object):
             # Close the session
             self.close_session()
 
-    def validate_account(self, email,password):
+    def areCredentialsCorrect(self, email,password):
         """Check if a row with the given email exists in the database."""
         try:
             # Construct the SQL query to check if the email exists
