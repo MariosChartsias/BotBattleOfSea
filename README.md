@@ -4,7 +4,7 @@
 
 ## Overview
 
-BotBattleOfSea is an advanced AI-driven bot designed for competitive gameplay in the Battle of Sea game. This bot is engineered to demonstrate strategic thinking and adaptability in real-time gaming scenarios. Main purpose is to collect the glitters and when the bot-question comes up to identify and answer the questions
+BotBattleOfSea is an advanced AI-driven bot designed for competitive gameplay in the Battle of Sea game. This bot is engineered to demonstrate strategic thinking and adaptability in real-time gaming scenarios. The main purpose is to collect the glitters and, when the bot-question comes up, to identify and answer the questions.
 
 ## Features
 
