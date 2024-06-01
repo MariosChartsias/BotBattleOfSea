@@ -20,11 +20,14 @@ Key steps in data preparation include:
 - **Data Splitting**: Dividing the data into training, validation, and test sets to evaluate performance.
 
 ### OCR Detection
-#### screenshot before detection
+#### screenshot 1 before detection
 <img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20before%20detection.png?token=GHSAT0AAAAAACTB7RTHEKHD6Z54RGT3ADVYZS274NQ" alt="OCR Detection" width="1500"/>
 
-#### screenshot after detection
+#### screenshot 1 after detection
 <img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20after%20detection.jpg?token=GHSAT0AAAAAACTB7RTGKXOXCUQBRO7CP2P2ZS3AIVQ" alt="OCR Detection" width="1500"/>
+
+#### screenshot 2 after detection (only)
+<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/01e62519-e5e5-465e-be29-69c2d059b50f.png?token=GHSAT0AAAAAACTB7RTGQWUAWSMH7LU7NURUZS3AVDA" width="1500"/>
 
 ## Features
 
