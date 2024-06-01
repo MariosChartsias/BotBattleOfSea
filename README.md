@@ -6,6 +6,19 @@
 
 BotBattleOfSea is an advanced AI-driven bot designed for competitive gameplay in the Battle of Sea game. This bot is engineered to demonstrate strategic thinking and adaptability in real-time gaming scenarios. The main purpose is to collect the glitters and, when the bot-question comes up, to identify and answer the questions.
 
+### Data Preparation
+
+The effectiveness of BotBattleOfSea relies on meticulous data preparation. This involves gathering, cleaning, and preprocessing data to ensure the bot can make accurate decisions during gameplay.
+
+![Data Preparation](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTHC5DKUGY7LJEWJETGZS26IDQ)
+
+Key steps in data preparation include:
+
+- **Data Collection**: Accumulating gameplay data to train and test the bot.
+- **Data Cleaning**: Removing inconsistencies and noise from the data to improve accuracy.
+- **Feature Engineering**: Creating meaningful features that enhance the bot's learning process.
+- **Data Splitting**: Dividing the data into training, validation, and test sets to evaluate performance.
+
 ## Features
 
 - **Strategic Planning**: Implements complex algorithms to predict and counter opponent moves.
