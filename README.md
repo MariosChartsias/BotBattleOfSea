@@ -19,10 +19,9 @@ Key steps in data preparation include:
 - **Feature Engineering**: Creating meaningful features that enhance the bot's learning process.
 - **Data Splitting**: Dividing the data into training, validation, and test sets to evaluate performance.
 
-### Object Detection
+### OCR Detection
 
-![Data Preparation](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTHC5DKUGY7LJEWJETGZS26IDQ)
-
+![OCR Detection]([https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTHC5DKUGY7LJEWJETGZS26IDQ](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20before%20detection.png?token=GHSAT0AAAAAACTB7RTHEKHD6Z54RGT3ADVYZS274NQ))
 ## Features
 
 - **Strategic Planning**: Implements complex algorithms to predict and counter opponent moves.
