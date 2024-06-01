@@ -10,7 +10,7 @@ BotBattleOfSea is an advanced AI-driven bot designed for competitive gameplay in
 
 The effectiveness of BotBattleOfSea relies on meticulous data preparation. This involves gathering, cleaning, and preprocessing data to ensure the bot can make accurate decisions during gameplay.
 
-[![Data Preparation](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTHC5DKUGY7LJEWJETGZS26IDQ)](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTGYNKUOGI3BIL5NIRMZS276SQ)
+![Data Preparation](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTGYNKUOGI3BIL5NIRMZS276SQ)
 
 Key steps in data preparation include:
 
