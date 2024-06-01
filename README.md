@@ -23,6 +23,8 @@ Key steps in data preparation include:
 
 <img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20before%20detection.png?token=GHSAT0AAAAAACTB7RTHEKHD6Z54RGT3ADVYZS274NQ" alt="OCR Detection" width="1500"/>
 
+<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20after%20detection.jpg?token=GHSAT0AAAAAACTB7RTH4CPMLGXCTRCAWDNIZS274SQ" alt="OCR Detection" width="1500"/>
+
 ## Features
 
 - **Strategic Planning**: Implements complex algorithms to predict and counter opponent moves.
