@@ -10,7 +10,7 @@ BotBattleOfSea is an advanced AI-driven bot designed for competitive gameplay in
 
 The effectiveness of BotBattleOfSea relies on meticulous data preparation. This involves gathering, cleaning, and preprocessing data to ensure the bot can make accurate decisions during gameplay.
 
-![Data Preparation](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/banner-integrations.png?token=GHSAT0AAAAAACTB7RTGYNKUOGI3BIL5NIRMZS276SQ)
+![Data Preparation](https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/refs/heads/main/img/banner-integrations.png)
 
 Key steps in data preparation include:
 
@@ -24,10 +24,10 @@ Key steps in data preparation include:
 <img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/refs/heads/main/img/ocr%20before%20detection.png" alt="OCR Detection" width="1500"/>
 
 #### screenshot 1 after detection
-<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20after%20detection.jpg?token=GHSAT0AAAAAACTB7RTGKXOXCUQBRO7CP2P2ZS3AIVQ" alt="OCR Detection" width="1500"/>
+<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/refs/heads/main/img/ocr%20after%20detection.jpg" alt="OCR Detection" width="1500"/>
 
 #### screenshot 2 after detection (only)
-<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/01e62519-e5e5-465e-be29-69c2d059b50f.png?token=GHSAT0AAAAAACTB7RTGQWUAWSMH7LU7NURUZS3AVDA" width="1500"/>
+<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/refs/heads/main/img/01e62519-e5e5-465e-be29-69c2d059b50f.png" width="1500"/>
 
 ## Features
 
