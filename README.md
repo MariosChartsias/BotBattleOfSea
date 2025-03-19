@@ -21,7 +21,7 @@ Key steps in data preparation include:
 
 ### OCR Detection
 #### screenshot 1 before detection
-<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20before%20detection.png?token=GHSAT0AAAAAACTB7RTHEKHD6Z54RGT3ADVYZS274NQ" alt="OCR Detection" width="1500"/>
+<img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/refs/heads/main/img/ocr%20before%20detection.png" alt="OCR Detection" width="1500"/>
 
 #### screenshot 1 after detection
 <img src="https://raw.githubusercontent.com/MariosChartsias/BotBattleOfSea/main/img/ocr%20after%20detection.jpg?token=GHSAT0AAAAAACTB7RTGKXOXCUQBRO7CP2P2ZS3AIVQ" alt="OCR Detection" width="1500"/>
